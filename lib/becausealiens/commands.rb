@@ -1,0 +1,3 @@
+
+
+require 'becausealiens/commands/scrape'
