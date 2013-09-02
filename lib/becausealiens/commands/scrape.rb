@@ -1,5 +1,8 @@
 require 'anemone'
 require 'odyssey'
+require 'mongo'
+
+include Mongo
 
 command :'scrape' do |c|
   c.syntax = 'scrape'
@@ -8,6 +11,13 @@ command :'scrape' do |c|
 
 	trap("INT") { exit }
 
+	host = ENV['MONGO_RUBY_DRIVER_HOST'] || 'localhost'
+	port = ENV['MONGO_RUBY_DRIVER_PORT'] || MongoClient::DEFAULT_PORT
+	client  = MongoClient.new(host, port, :pool_size => 35, :pool_timeout => 5)
+	local = client.db('local')
+	aliens = local.create_collection('ufo_reports')
+
+#	Anemone.crawl("http://www.nuforc.org/webreports/ndxpost.html") do |anemone|
 	Anemone.crawl("http://www.nuforc.org/webreports/ndxp130830.html") do |anemone|
   		anemone.on_pages_like %r{^http://www.nuforc.org/webreports/[^.]+/[^.]+.html$} do |page|
       		say_ok page.url.to_s
@@ -34,6 +44,7 @@ command :'scrape' do |c|
 			end
 
 			# save data to a datasource here
+			aliens.insert(outputData)
 			puts outputData
   		end
 	end
