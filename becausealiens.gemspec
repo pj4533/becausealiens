@@ -16,7 +16,9 @@ Gem::Specification.new do |s|
   s.add_dependency "commander", "~> 4.1.2"
   s.add_dependency "terminal-table", "~> 1.4.5"
   s.add_dependency "term-ansicolor", "~> 1.0.7"
-  
+  s.add_dependency "anemone"
+  s.add_dependency "odyssey"
+
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
 
