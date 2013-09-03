@@ -22,22 +22,26 @@ command :'scrape' do |c|
 			say_ok page.url.to_s
 			doc = page.doc
 			outputData = Hash.new			
-			topText = doc.search("tbody tr")[0].search('td font')[0].inner_html
-			topText.split('<br>').each do |textLine|
-				splitTextLine = textLine.split(':',2)
-				if splitTextLine.count == 2
-					outputData[splitTextLine[0].strip] = splitTextLine[1].strip
-				end
+			if doc.search("tbody tr")[0]
+				topText = doc.search("tbody tr")[0].search('td font')[0].inner_html
+				topText.split('<br>').each do |textLine|
+					splitTextLine = textLine.split(':',2)
+					if splitTextLine.count == 2
+						outputData[splitTextLine[0].strip] = splitTextLine[1].strip
+					end
+				end				
 			end
 
-			bottomText = doc.search("tbody tr")[1].search('td font')[0].inner_html
-			outputData['Report'] = bottomText.gsub("<br>", " ")
-			outputData['FleschKincaidGrade'] = Odyssey.flesch_kincaid_grade_level(outputData['Report'])
-			outputData['FleschKincaidEase'] = Odyssey.flesch_kincaid_reading_ease(outputData['Report'])
-			outputData['GunningFog'] = Odyssey.gunning_fog(outputData['Report'])
-			outputData['ColemanLiau'] = Odyssey.coleman_liau(outputData['Report'])
-			outputData['Smog'] = Odyssey.smog(outputData['Report'])
-			outputData['Ari'] = Odyssey.ari(outputData['Report'])
+			if doc.search("tbody tr")[1]
+				bottomText = doc.search("tbody tr")[1].search('td font')[0].inner_html
+				outputData['Report'] = bottomText.gsub("<br>", " ")
+				outputData['FleschKincaidGrade'] = Odyssey.flesch_kincaid_grade_level(outputData['Report'])
+				outputData['FleschKincaidEase'] = Odyssey.flesch_kincaid_reading_ease(outputData['Report'])
+				outputData['GunningFog'] = Odyssey.gunning_fog(outputData['Report'])
+				outputData['ColemanLiau'] = Odyssey.coleman_liau(outputData['Report'])
+				outputData['Smog'] = Odyssey.smog(outputData['Report'])
+				outputData['Ari'] = Odyssey.ari(outputData['Report'])				
+			end
 
 			# save data to a datasource here
 			aliens.insert(outputData)
